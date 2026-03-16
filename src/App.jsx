@@ -118,11 +118,16 @@ const HomeSection = ({ onNav }) => {
       {/* Hero */}
       <div className="fadeUp" style={{ textAlign: "center", padding: "60px 0 48px" }}>
         <div style={{
-          width: 88, height: 88, borderRadius: 24, margin: "0 auto 24px",
-          background: "linear-gradient(145deg, #1d1d1f 0%, #3a3a3c 100%)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 40, boxShadow: "0 12px 40px rgba(0,0,0,0.2)"
-        }}>👤</div>
+          width: 96, height: 96, borderRadius: "50%", margin: "0 auto 24px",
+          overflow: "hidden",
+          boxShadow: "0 0 0 3px #fff, 0 0 0 5px rgba(0,113,227,0.3), 0 12px 40px rgba(0,0,0,0.18)"
+        }}>
+          <img
+            src="/profile.png"
+            alt="Dheeraj Yampati"
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+          />
+        </div>
         <h1 style={{ fontSize: 52, fontWeight: 700, color: colors.text, letterSpacing: "-0.03em", lineHeight: 1.1 }}>
           Dheeraj Yampati
         </h1>
