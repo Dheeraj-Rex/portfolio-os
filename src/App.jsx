@@ -62,6 +62,29 @@ const globalStyle = `
 
   .nav-pill:hover { background: rgba(0,0,0,0.06); }
   .nav-pill { transition: background 0.15s ease; }
+
+  /* ── MOBILE RESPONSIVE ───────────────────────────────────── */
+  @media (max-width: 768px) {
+    .desktop-grid-5 { grid-template-columns: repeat(3, 1fr) !important; }
+    .desktop-grid-3 { grid-template-columns: 1fr 1fr !important; }
+    .desktop-grid-2 { grid-template-columns: 1fr !important; }
+    .desktop-grid-skills { grid-template-columns: 1fr 1fr !important; }
+    .desktop-two-col { grid-template-columns: 1fr !important; }
+    .hero-title { font-size: 36px !important; }
+    .hero-sub { font-size: 16px !important; }
+    .section-title { font-size: 26px !important; }
+    .section-pad { padding: 20px !important; }
+    .hide-mobile { display: none !important; }
+    .dock-label { display: none !important; }
+    .resume-bullets { padding-left: 12px !important; }
+  }
+  @media (max-width: 480px) {
+    .desktop-grid-5 { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+    .desktop-grid-3 { grid-template-columns: 1fr !important; }
+    .mini-apps-grid { grid-template-columns: 1fr !important; }
+    .hero-title { font-size: 30px !important; }
+    .stats-bar { gap: 16px !important; }
+  }
 `;
 
 // ─── COMPONENTS ───────────────────────────────────────────────────
@@ -88,7 +111,7 @@ const WindowDots = () => (
 );
 
 const SectionShell = ({ children, style = {} }) => (
-  <div className="scaleIn" style={{
+  <div className="scaleIn section-pad" style={{
     background: colors.surfaceSolid,
     borderRadius: 18,
     padding: 32,
@@ -116,7 +139,7 @@ const HomeSection = ({ onNav }) => {
   return (
     <div style={{ maxWidth: 900, margin: "0 auto" }}>
       {/* Hero */}
-      <div className="fadeUp" style={{ textAlign: "center", padding: "60px 0 48px" }}>
+      <div className="fadeUp" style={{ textAlign: "center", padding: "40px 0 36px" }}>
         <div style={{
           width: 96, height: 96, borderRadius: "50%", margin: "0 auto 24px",
           overflow: "hidden",
@@ -128,10 +151,10 @@ const HomeSection = ({ onNav }) => {
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
           />
         </div>
-        <h1 style={{ fontSize: 52, fontWeight: 700, color: colors.text, letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+        <h1 className="hero-title" style={{ fontSize: 52, fontWeight: 700, color: colors.text, letterSpacing: "-0.03em", lineHeight: 1.1 }}>
           Dheeraj Yampati
         </h1>
-        <p style={{ fontSize: 20, color: colors.subtext, marginTop: 10, fontWeight: 400 }}>
+        <p className="hero-sub" style={{ fontSize: 20, color: colors.subtext, marginTop: 10, fontWeight: 400 }}>
           Full-Stack Dev · AI Builder · Co-Founder
         </p>
         <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 16 }}>
@@ -150,7 +173,7 @@ const HomeSection = ({ onNav }) => {
       </div>
 
       {/* App Grid */}
-      <div style={{
+      <div className="desktop-grid-5" style={{
         display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14,
         animation: "fadeUp 0.5s 0.15s ease both", opacity: 0,
         animationFillMode: "forwards"
@@ -180,7 +203,7 @@ const HomeSection = ({ onNav }) => {
         background: "rgba(0,0,0,0.03)", border: `1px solid ${colors.border}`,
         display: "flex", gap: 24, justifyContent: "center",
         animation: "fadeUp 0.5s 0.3s ease both", opacity: 0, animationFillMode: "forwards"
-      }}>
+      }} className="stats-bar">
         {[["3+", "Projects"], ["3", "Mini Apps"], ["2+ yrs", "Experience"], ["Open", "to Work"]].map(([v, l]) => (
           <div key={l} style={{ textAlign: "center" }}>
             <div style={{ fontSize: 20, fontWeight: 700, color: colors.text }}>{v}</div>
@@ -195,7 +218,7 @@ const HomeSection = ({ onNav }) => {
 // ABOUT
 const AboutSection = () => (
   <SectionShell>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, maxWidth: 860, margin: "0 auto" }}>
+    <div className="desktop-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, maxWidth: 860, margin: "0 auto" }}>
       <div>
         <p style={{ fontSize: 12, fontWeight: 600, color: colors.accent, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>About Me</p>
         <h2 style={{ fontSize: 36, fontWeight: 700, color: colors.text, letterSpacing: "-0.025em", lineHeight: 1.15 }}>
@@ -260,7 +283,7 @@ const ProjectsSection = () => {
           </div>
           <span style={{ fontSize: 13, color: colors.subtext }}>6 projects</span>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+        <div className="desktop-grid-3" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
           {projects.map((p, i) => (
             <div key={i} className="card" style={{
               borderRadius: 16, padding: "20px",
@@ -340,7 +363,7 @@ const MiniAppsSection = () => {
         <h2 style={{ fontSize: 32, fontWeight: 700, color: colors.text, letterSpacing: "-0.025em", marginBottom: 6 }}>Mini Apps</h2>
         <p style={{ fontSize: 14, color: colors.subtext, marginBottom: 28 }}>Real apps — right here, no links needed. Click to launch.</p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div className="mini-apps-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           {apps.map(app => (
             <div key={app.id}>
               <div className="mini-app card" onClick={() => setActive(active === app.id ? null : app.id)} style={{
@@ -931,7 +954,7 @@ const ResumeSection = () => (
       {/* Skills Grid */}
       <div>
         <h3 style={{ fontSize: 13, fontWeight: 600, color: colors.subtext, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 16 }}>Skills</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+        <div className="desktop-grid-skills" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
           {[
             { cat: "Languages", skills: "Java, Python, C/C++, JavaScript, SQL, Bash" },
             { cat: "Frontend", skills: "React, Next.js, JavaFX, REST APIs" },
@@ -993,11 +1016,25 @@ const ContactSection = () => {
           </div>
         )}
 
-        <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 28 }}>
-          {[["GitHub","⌥"],["LinkedIn","in"],["Email","✉"]].map(([l, i]) => (
-            <div key={l} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: colors.subtext, cursor: "pointer" }}>
-              <span>{i}</span><span>{l}</span>
-            </div>
+        <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 28, flexWrap: "wrap" }}>
+          {[
+            { label: "GitHub",   icon: "⌥", href: "https://github.com/Dheeraj-Rex" },
+            { label: "LinkedIn", icon: "in", href: "https://linkedin.com/in/dheerajyampati" },
+            { label: "Email",    icon: "✉",  href: "mailto:dheerajyampati@gmail.com" },
+          ].map(({ label, icon, href }) => (
+            <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "flex", alignItems: "center", gap: 6, fontSize: 13,
+                color: colors.subtext, padding: "8px 16px", borderRadius: 980,
+                border: `1px solid ${colors.border}`, background: colors.bg,
+                textDecoration: "none", transition: "all 0.15s ease",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = colors.accent; e.currentTarget.style.color = colors.accent; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = colors.border; e.currentTarget.style.color = colors.subtext; }}
+            >
+              <span style={{ fontWeight: 600 }}>{icon}</span>
+              <span>{label}</span>
+            </a>
           ))}
         </div>
       </div>
@@ -1017,18 +1054,19 @@ const dockItems = [
 
 const Dock = ({ active, onNav }) => (
   <div style={{
-    position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)",
+    position: "fixed", bottom: 16, left: "50%", transform: "translateX(-50%)",
     background: colors.dock,
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
     borderRadius: 22,
-    padding: "10px 20px",
+    padding: "8px 14px",
     border: `1px solid rgba(255,255,255,0.6)`,
     boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
     display: "flex",
     alignItems: "flex-end",
-    gap: 6,
+    gap: 4,
     zIndex: 100,
+    maxWidth: "calc(100vw - 32px)",
   }}>
     {dockItems.map(item => (
       <div key={item.id} className="dock-icon" onClick={() => onNav(item.id)} style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -1093,7 +1131,7 @@ export default function PortfolioOS() {
       <style>{globalStyle}</style>
       <MenuBar section={section} />
       <div key={section} style={{
-        paddingTop: 64, paddingBottom: 100, paddingLeft: 20, paddingRight: 20,
+        paddingTop: 64, paddingBottom: 110, paddingLeft: 16, paddingRight: 16,
         maxWidth: 1000, margin: "0 auto",
         animation: "fadeIn 0.3s ease both"
       }}>
