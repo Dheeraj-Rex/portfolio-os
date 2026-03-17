@@ -154,9 +154,9 @@ const HomeSection = ({ onNav }) => {
           <img src="/profile.png" alt="Dheeraj Yampati" style={{ width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top" }}/>
         </div>
         <h1 className="hero-title" style={{ fontSize:52,fontWeight:700,color:colors.text,letterSpacing:"-0.03em",lineHeight:1.1 }}>Dheeraj Yampati</h1>
-        <p className="hero-sub" style={{ fontSize:20,color:colors.subtext,marginTop:10,fontWeight:400 }}>Full-Stack Dev · AI Builder · Co-Founder</p>
+        <p className="hero-sub" style={{ fontSize:20,color:colors.subtext,marginTop:10,fontWeight:400 }}>Software Engineer · AI/ML · Cloud · Full-Stack</p>
         <div style={{ display:"flex",gap:8,justifyContent:"center",marginTop:16,flexWrap:"wrap" }}>
-          {["Java","Python","React","AWS","AI/ML"].map(t=><Tag key={t} label={t}/>)}
+          {["Python","C/C++","Java","SQL","JavaScript"].map(t=><Tag key={t} label={t}/>)}
         </div>
         <div style={{ display:"flex",gap:12,justifyContent:"center",marginTop:28 }}>
           <button className="btn-primary" onClick={()=>onNav("projects")} style={{ background:colors.accent,color:"#fff",border:"none",padding:"12px 28px",borderRadius:980,fontSize:15,fontWeight:500 }}>View Projects</button>
@@ -169,14 +169,6 @@ const HomeSection = ({ onNav }) => {
             <div style={{ width:48,height:48,borderRadius:14,background:`${c.color}15`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 12px",fontSize:22,color:c.color }}>{c.icon}</div>
             <div style={{ fontWeight:600,fontSize:13,color:colors.text }}>{c.label}</div>
             <div style={{ fontSize:11,color:colors.subtext,marginTop:4 }}>{c.desc}</div>
-          </div>
-        ))}
-      </div>
-      <div className="stats-bar" style={{ marginTop:32,padding:"16px 20px",borderRadius:14,background:colors.bg,border:`1px solid ${colors.border}`,display:"flex",gap:24,justifyContent:"center",animation:"fadeUp 0.5s 0.3s ease both",opacity:0,animationFillMode:"forwards" }}>
-        {[["3+","Projects"],["5","Mini Apps"],["2+ yrs","Experience"],["Open","to Work"]].map(([v,l])=>(
-          <div key={l} style={{ textAlign:"center" }}>
-            <div style={{ fontSize:20,fontWeight:700,color:colors.text }}>{v}</div>
-            <div style={{ fontSize:11,color:colors.subtext,marginTop:2 }}>{l}</div>
           </div>
         ))}
       </div>
@@ -195,15 +187,37 @@ const AboutSection = () => {
           <p style={{ fontSize:12,fontWeight:600,color:colors.accent,letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:8 }}>About Me</p>
           <h2 style={{ fontSize:36,fontWeight:700,color:colors.text,letterSpacing:"-0.025em",lineHeight:1.15 }}>Building things<br/>that matter.</h2>
           <p style={{ marginTop:16,fontSize:15,color:colors.subtext,lineHeight:1.7 }}>I'm a CS grad from George Mason University with a passion for building full-stack products and AI-powered systems. I love turning complex problems into clean, working software — from RAG pipelines to real-time web apps.</p>
-          <p style={{ marginTop:12,fontSize:15,color:colors.subtext,lineHeight:1.7 }}>Currently interning as a Software Engineer while co-founding Apex Sky, a startup I've been building since 2023. I thrive at the intersection of backend engineering, machine learning, and product thinking.</p>
+          <p style={{ marginTop:12,fontSize:15,color:colors.subtext,lineHeight:1.7 }}>I love going deep — whether it's designing a database schema, building a RAG pipeline, or shipping a full-stack app from scratch. I pick things up fast and care about writing software that actually works in production.</p>
           <div style={{ marginTop:24,display:"flex",gap:8,flexWrap:"wrap" }}>
             {["Java","Python","React/Next.js","FastAPI","Spring Boot","AWS","RAG / LLMs","MySQL"].map(s=><Tag key={s} label={s}/>)}
           </div>
+
+          {/* Personal facts */}
+          <div style={{ marginTop:28 }}>
+            <p style={{ fontSize:12,fontWeight:600,color:colors.subtext,letterSpacing:"0.06em",textTransform:"uppercase",marginBottom:12 }}>Outside of work</p>
+            <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:10 }}>
+              {[
+                {icon:"🏉", label:"Rugby",   sub:"Competitive team sport"},
+                {icon:"🎸", label:"Music",   sub:"Guitar & discovering new sounds"},
+                {icon:"✈️", label:"Travel",  sub:"Always planning the next trip"},
+                {icon:"🛠️", label:"Builder", sub:"Always tinkering on side projects"},
+              ].map(f=>(
+                <div key={f.label} style={{ display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:10,background:colors.bg,border:`1px solid ${colors.border}` }}>
+                  <span style={{ fontSize:18 }}>{f.icon}</span>
+                  <div>
+                    <div style={{ fontSize:12,fontWeight:600,color:colors.text }}>{f.label}</div>
+                    <div style={{ fontSize:11,color:colors.subtext }}>{f.sub}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+
         <div style={{ display:"flex",flexDirection:"column",gap:14 }}>
           {[
             {icon:"🎓",title:"Education",    sub:"B.S. Computer Science · George Mason University · Dec 2025"},
-            {icon:"💼",title:"Current Role", sub:"SWE Intern @ ELINT PRO · Co-Founder @ Apex Sky"},
+            {icon:"💼",title:"Current Role", sub:"Software Engineering Intern @ ELINT PRO"},
             {icon:"📍",title:"Location",     sub:"Fairfax, VA · Open to Remote"},
             {icon:"📧",title:"Contact",      sub:"dheerajyampati@gmail.com"},
           ].map(item=>(
@@ -224,16 +238,60 @@ const AboutSection = () => {
 // ─── PROJECTS ─────────────────────────────────────────────────────
 const ProjectsSection = () => {
   const { colors } = useTheme();
+  const [expanded, setExpanded] = useState(null);
   const GH = "https://github.com/Dheeraj-Rex";
+
   const projects = [
-    {title:"Microsoft ChatBot App",         desc:"Connects to Outlook & OneDrive via MS Graph API. Uses bge-m3 embeddings, Weaviate, and Llama 3/Mistral for semantic email & doc search.", tags:["FastAPI","RAG","MS Graph","LLMs"],     color:"#0071e3", icon:"🤖", status:"Live",        github:GH},
-    {title:"TaskFlow",                      desc:"Full-stack team productivity app with JWT auth, real-time WebSocket task updates, and Docker deployment on AWS.",                          tags:["React","FastAPI","PostgreSQL","AWS"],  color:"#34c759", icon:"✅", status:"Live",        github:GH},
-    {title:"Immigration Processing System", desc:"JavaFX + MySQL desktop app for managing petition workflows with approver dashboards, DAO layers, and MVC architecture.",                  tags:["JavaFX","MySQL","MVC","Spring"],       color:"#ff9f0a", icon:"🏛️", status:"Live",        github:GH},
-    {title:"HRMS Modules",                  desc:"Onboarding, payroll automation, and leave tracking modules built with Spring Boot and MySQL, secured with JWT role-based access.",          tags:["Spring Boot","MySQL","JWT","REST"],    color:"#ff3b30", icon:"🏢", status:"In Progress", github:GH},
-    {title:"AWS Data Pipelines",            desc:"Built ETL pipelines using S3, Glue, and Athena with QuickSight dashboards to visualize and process client datasets.",                    tags:["AWS","ETL","QuickSight","Athena"],     color:"#bf5af2", icon:"☁️", status:"Live",        github:GH},
-    {title:"Portfolio OS",                  desc:"The app you're in right now — a personal OS-style portfolio with embedded mini apps, AI chatbot, games, and live projects.",              tags:["React","Canvas API","AI","Design"],    color:"#ff6b35", icon:"🖥️", status:"In Progress", github:GH},
+    {
+      title:"Portfolio OS", icon:"🖥️", color:"#ff6b35",
+      tags:["React","Canvas API","AI","Design"],
+      builtAt: null,
+      github: GH,
+      desc:"My personal portfolio, designed to be an experience — not just a page.",
+      detail:"I built this because I wanted my portfolio to show what I can build, not just describe it. It's a macOS-inspired personal OS with a real dock, menu bar, dark mode, and embedded live demos of projects I've shipped. The goal was to make something unique that any recruiter or engineer would remember after visiting."
+    },
+    {
+      title:"Microsoft ChatBot App", icon:"🤖", color:"#0071e3",
+      tags:["FastAPI","RAG","MS Graph","LLMs"],
+      builtAt:"@ VSoft Consulting",
+      github: null,
+      desc:"Natural language search across Outlook & OneDrive using RAG.",
+      detail:"Built during my ML internship at VSoft. The app connects to Outlook and OneDrive via Microsoft Graph API and lets users search emails and documents using natural language. Powered by a RAG pipeline with Weaviate, bge-m3 embeddings, and Llama 3/Mistral for context-aware answer generation."
+    },
+    {
+      title:"TaskFlow", icon:"✅", color:"#34c759",
+      tags:["React","FastAPI","PostgreSQL","AWS"],
+      builtAt: null,
+      github: null,
+      desc:"Full-stack team task manager with real-time WebSocket updates.",
+      detail:"A full-stack team productivity app with real-time task updates via WebSockets, JWT authentication, and a clean React frontend. Backend runs on FastAPI with PostgreSQL, containerized with Docker and deployed to AWS. Built to handle collaborative workflows without page refreshes."
+    },
+    {
+      title:"Immigration Processing System", icon:"🏛️", color:"#ff9f0a",
+      tags:["JavaFX","MySQL","MVC","Spring"],
+      builtAt:"@ George Mason University",
+      github: GH,
+      desc:"Desktop app for managing immigration petition workflows end to end.",
+      detail:"A desktop application built to manage immigration petition workflows as a semester-long software engineering project at GMU. Features role-based approver dashboards, a clean DAO data layer, and MVC architecture using JavaFX and MySQL — built in sprints with a full team."
+    },
+    {
+      title:"AWS Data Pipelines", icon:"☁️", color:"#bf5af2",
+      tags:["AWS","ETL","QuickSight","Athena"],
+      builtAt:"@ VSoft Consulting",
+      github: null,
+      desc:"ETL pipelines on AWS transforming client datasets into live dashboards.",
+      detail:"Built ETL pipelines using S3, Glue, and Athena to process and transform client datasets, connected to QuickSight dashboards for visual reporting and analysis. Part of a larger data infrastructure project at VSoft — designed to run on a schedule and handle variable-format input files."
+    },
+    {
+      title:"HRMS Modules", icon:"🏢", color:"#ff3b30",
+      tags:["Spring Boot","MySQL","JWT","REST"],
+      builtAt:"@ ELINT PRO",
+      github: null,
+      desc:"Production HR modules for onboarding, payroll, and leave tracking.",
+      detail:"Enterprise HR modules covering onboarding, payroll automation, and leave tracking — currently in production at ELINT PRO. Built with Java Spring Boot and MySQL, with secure REST APIs using JWT role-based access control. Optimized SQL queries and added lightweight caching to reduce response times."
+    },
   ];
-  const statusColor = s => s==="Live"?colors.green:s==="Open Source"?colors.accent:colors.yellow;
+
   return (
     <SectionShell>
       <div style={{ maxWidth:900, margin:"0 auto" }}>
@@ -242,28 +300,46 @@ const ProjectsSection = () => {
             <p style={{ fontSize:12,fontWeight:600,color:colors.accent,letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:6 }}>My Work</p>
             <h2 style={{ fontSize:32,fontWeight:700,color:colors.text,letterSpacing:"-0.025em" }}>Projects</h2>
           </div>
-          <a href={GH} target="_blank" rel="noopener noreferrer" style={{ fontSize:13,color:colors.accent,textDecoration:"none",fontWeight:500 }}>View all on GitHub →</a>
+          <a href={GH} target="_blank" rel="noopener noreferrer" style={{ fontSize:13,color:colors.accent,textDecoration:"none",fontWeight:500 }}>View GitHub →</a>
         </div>
         <div className="desktop-grid-3" style={{ display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16 }}>
-          {projects.map((p,i)=>(
-            <div key={i} className="card" style={{ borderRadius:16,padding:20,border:`1px solid ${colors.border}`,background:colors.surfaceSolid,boxShadow:"0 2px 12px rgba(0,0,0,0.04)",display:"flex",flexDirection:"column" }}>
-              <div style={{ height:88,borderRadius:10,marginBottom:14,background:`linear-gradient(135deg,${p.color}18,${p.color}06)`,border:`1px solid ${p.color}20`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:34 }}>{p.icon}</div>
-              <div style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6 }}>
-                <h3 style={{ fontSize:13,fontWeight:600,color:colors.text,flex:1,paddingRight:8 }}>{p.title}</h3>
-                <span style={{ fontSize:10,padding:"2px 8px",borderRadius:20,background:`${statusColor(p.status)}15`,color:statusColor(p.status),fontWeight:600,whiteSpace:"nowrap" }}>{p.status}</span>
+          {projects.map((p,i)=>{
+            const isOpen = expanded === i;
+            return (
+              <div key={i} style={{ display:"flex", flexDirection:"column" }}>
+                <div className="card" onClick={()=>setExpanded(isOpen ? null : i)}
+                  style={{ borderRadius:16,padding:20,border:`1px solid ${isOpen ? p.color+"50" : colors.border}`,background: isOpen ? `${p.color}06` : colors.surfaceSolid,boxShadow:"0 2px 12px rgba(0,0,0,0.04)",display:"flex",flexDirection:"column",flex:1 }}>
+                  <div style={{ height:80,borderRadius:10,marginBottom:14,background:`linear-gradient(135deg,${p.color}18,${p.color}06)`,border:`1px solid ${p.color}20`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32 }}>{p.icon}</div>
+                  <div style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6,gap:6 }}>
+                    <h3 style={{ fontSize:13,fontWeight:600,color:colors.text,flex:1 }}>{p.title}</h3>
+                    <div style={{ fontSize:18,color:colors.subtext,transition:"transform 0.2s ease",transform:isOpen?"rotate(90deg)":"rotate(0deg)",flexShrink:0 }}>›</div>
+                  </div>
+                  {p.builtAt && (
+                    <div style={{ fontSize:11,fontWeight:500,color:p.color,marginBottom:6 }}>{p.builtAt}</div>
+                  )}
+                  <p style={{ fontSize:12,color:colors.subtext,lineHeight:1.6,marginBottom:12,flex:1 }}>{p.desc}</p>
+                  <div style={{ display:"flex",gap:4,flexWrap:"wrap",marginBottom: p.github ? 12 : 0 }}>
+                    {p.tags.map(t=><Tag key={t} label={t} color={p.color}/>)}
+                  </div>
+                  {p.github && (
+                    <a href={p.github} target="_blank" rel="noopener noreferrer"
+                      onClick={e=>e.stopPropagation()}
+                      style={{ marginTop:12,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"8px 0",borderRadius:10,border:`1px solid ${colors.border}`,background:colors.bg,color:colors.subtext,textDecoration:"none",fontSize:12,fontWeight:500,transition:"all 0.15s ease" }}
+                      onMouseEnter={e=>{e.currentTarget.style.borderColor=p.color;e.currentTarget.style.color=p.color;e.currentTarget.style.background=`${p.color}08`;}}
+                      onMouseLeave={e=>{e.currentTarget.style.borderColor=colors.border;e.currentTarget.style.color=colors.subtext;e.currentTarget.style.background=colors.bg;}}>
+                      ⌥ View on GitHub
+                    </a>
+                  )}
+                </div>
+                {/* Expanded detail */}
+                {isOpen && (
+                  <div className="slideUp" style={{ marginTop:6,borderRadius:14,padding:"18px 20px",background:colors.bg,border:`1px solid ${p.color}30` }}>
+                    <p style={{ fontSize:13,color:colors.text,lineHeight:1.75 }}>{p.detail}</p>
+                  </div>
+                )}
               </div>
-              <p style={{ fontSize:12,color:colors.subtext,lineHeight:1.6,marginBottom:12,flex:1 }}>{p.desc}</p>
-              <div style={{ display:"flex",gap:4,flexWrap:"wrap",marginBottom:12 }}>
-                {p.tags.map(t=><Tag key={t} label={t} color={p.color}/>)}
-              </div>
-              <a href={p.github} target="_blank" rel="noopener noreferrer"
-                style={{ display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"8px 0",borderRadius:10,border:`1px solid ${colors.border}`,background:colors.bg,color:colors.subtext,textDecoration:"none",fontSize:12,fontWeight:500,transition:"all 0.15s ease" }}
-                onMouseEnter={e=>{e.currentTarget.style.borderColor=p.color;e.currentTarget.style.color=p.color;e.currentTarget.style.background=`${p.color}08`;}}
-                onMouseLeave={e=>{e.currentTarget.style.borderColor=colors.border;e.currentTarget.style.color=colors.subtext;e.currentTarget.style.background=colors.bg;}}>
-                ⌥ View on GitHub
-              </a>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </SectionShell>
