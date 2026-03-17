@@ -303,53 +303,70 @@ const ProjectsSection = () => {
           <a href={GH} target="_blank" rel="noopener noreferrer" style={{ fontSize:13,color:colors.accent,textDecoration:"none",fontWeight:500 }}>View GitHub →</a>
         </div>
 
-        {/* Card grid — no expand inside, stays uniform */}
-        <div className="desktop-grid-3" style={{ display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16 }}>
-          {projects.map((p,i)=>{
-            const isOpen = expanded === i;
-            return (
-              <div key={i} className="card" onClick={()=>setExpanded(isOpen ? null : i)}
-                style={{ borderRadius:16,padding:20,border:`1px solid ${isOpen ? p.color+"50" : colors.border}`,background: isOpen ? `${p.color}06` : colors.surfaceSolid,boxShadow:"0 2px 12px rgba(0,0,0,0.04)",display:"flex",flexDirection:"column" }}>
-                <div style={{ height:80,borderRadius:10,marginBottom:14,background:`linear-gradient(135deg,${p.color}18,${p.color}06)`,border:`1px solid ${p.color}20`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32 }}>{p.icon}</div>
-                <div style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6,gap:6 }}>
-                  <h3 style={{ fontSize:13,fontWeight:600,color:colors.text,flex:1 }}>{p.title}</h3>
-                  <div style={{ fontSize:18,color:colors.subtext,transition:"transform 0.2s ease",transform:isOpen?"rotate(90deg)":"rotate(0deg)",flexShrink:0 }}>›</div>
-                </div>
-                {p.builtAt && <div style={{ fontSize:11,fontWeight:500,color:p.color,marginBottom:6 }}>{p.builtAt}</div>}
-                <p style={{ fontSize:12,color:colors.subtext,lineHeight:1.6,marginBottom:12,flex:1 }}>{p.desc}</p>
-                <div style={{ display:"flex",gap:4,flexWrap:"wrap",marginBottom: p.github ? 12 : 0 }}>
-                  {p.tags.map(t=><Tag key={t} label={t} color={p.color}/>)}
-                </div>
-                {p.github && (
-                  <a href={p.github} target="_blank" rel="noopener noreferrer"
-                    onClick={e=>e.stopPropagation()}
-                    style={{ marginTop:12,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"8px 0",borderRadius:10,border:`1px solid ${colors.border}`,background:colors.bg,color:colors.subtext,textDecoration:"none",fontSize:12,fontWeight:500,transition:"all 0.15s ease" }}
-                    onMouseEnter={e=>{e.currentTarget.style.borderColor=p.color;e.currentTarget.style.color=p.color;e.currentTarget.style.background=`${p.color}08`;}}
-                    onMouseLeave={e=>{e.currentTarget.style.borderColor=colors.border;e.currentTarget.style.color=colors.subtext;e.currentTarget.style.background=colors.bg;}}>
-                    ⌥ View on GitHub
-                  </a>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        {/* Grid with row-aware expand panel — full-width item after each row */}
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16 }}>
+          {(() => {
+            const items = [];
+            const COLS_COUNT = 3;
+            for (let i = 0; i < projects.length; i++) {
+              const p = projects[i];
+              const isOpen = expanded === i;
+              const isLastInRow = (i + 1) % COLS_COUNT === 0 || i === projects.length - 1;
 
-        {/* Expanded detail — always below ALL cards, never disrupts grid */}
-        {expanded !== null && (
-          <div className="slideUp" style={{ marginTop:16,borderRadius:16,padding:"22px 24px",background:colors.bg,border:`1px solid ${projects[expanded].color}40`,position:"relative" }}>
-            <div style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10 }}>
-              <div style={{ display:"flex",alignItems:"center",gap:10 }}>
-                <span style={{ fontSize:22 }}>{projects[expanded].icon}</span>
-                <div>
-                  <div style={{ fontSize:14,fontWeight:600,color:colors.text }}>{projects[expanded].title}</div>
-                  {projects[expanded].builtAt && <div style={{ fontSize:11,color:projects[expanded].color,fontWeight:500 }}>{projects[expanded].builtAt}</div>}
+              items.push(
+                <div key={`card-${i}`} className="card" onClick={()=>setExpanded(isOpen ? null : i)}
+                  style={{ borderRadius:16, padding:20, border:`1px solid ${isOpen ? p.color+"50" : colors.border}`, background: isOpen ? `${p.color}06` : colors.surfaceSolid, boxShadow:"0 2px 12px rgba(0,0,0,0.04)", display:"flex", flexDirection:"column" }}>
+                  <div style={{ height:80, borderRadius:10, marginBottom:14, background:`linear-gradient(135deg,${p.color}18,${p.color}06)`, border:`1px solid ${p.color}20`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:32 }}>{p.icon}</div>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:6, gap:6 }}>
+                    <h3 style={{ fontSize:13, fontWeight:600, color:colors.text, flex:1 }}>{p.title}</h3>
+                    <div style={{ fontSize:18, color:colors.subtext, transition:"transform 0.2s ease", transform:isOpen?"rotate(90deg)":"rotate(0deg)", flexShrink:0 }}>›</div>
+                  </div>
+                  {p.builtAt && <div style={{ fontSize:11, fontWeight:500, color:p.color, marginBottom:6 }}>{p.builtAt}</div>}
+                  <p style={{ fontSize:12, color:colors.subtext, lineHeight:1.6, marginBottom:12, flex:1 }}>{p.desc}</p>
+                  <div style={{ display:"flex", gap:4, flexWrap:"wrap", marginBottom: p.github ? 12 : 0 }}>
+                    {p.tags.map(t=><Tag key={t} label={t} color={p.color}/>)}
+                  </div>
+                  {p.github && (
+                    <a href={p.github} target="_blank" rel="noopener noreferrer"
+                      onClick={e=>e.stopPropagation()}
+                      style={{ marginTop:12, display:"flex", alignItems:"center", justifyContent:"center", gap:6, padding:"8px 0", borderRadius:10, border:`1px solid ${colors.border}`, background:colors.bg, color:colors.subtext, textDecoration:"none", fontSize:12, fontWeight:500, transition:"all 0.15s ease" }}
+                      onMouseEnter={e=>{e.currentTarget.style.borderColor=p.color;e.currentTarget.style.color=p.color;e.currentTarget.style.background=`${p.color}08`;}}
+                      onMouseLeave={e=>{e.currentTarget.style.borderColor=colors.border;e.currentTarget.style.color=colors.subtext;e.currentTarget.style.background=colors.bg;}}>
+                      ⌥ View on GitHub
+                    </a>
+                  )}
                 </div>
-              </div>
-              <button onClick={()=>setExpanded(null)} style={{ background:"transparent",border:"none",fontSize:18,color:colors.subtext,cursor:"pointer",lineHeight:1,padding:"2px 6px",borderRadius:6 }}>✕</button>
-            </div>
-            <p style={{ fontSize:14,color:colors.text,lineHeight:1.8 }}>{projects[expanded].detail}</p>
-          </div>
-        )}
+              );
+
+              // After each complete row, check if any card in this row is expanded
+              if (isLastInRow) {
+                const rowStart = Math.floor(i / COLS_COUNT) * COLS_COUNT;
+                const rowEnd = i;
+                const expandedInRow = expanded !== null && expanded >= rowStart && expanded <= rowEnd;
+                if (expandedInRow) {
+                  const p2 = projects[expanded];
+                  items.push(
+                    <div key={`expand-${i}`} className="slideUp"
+                      style={{ gridColumn:"1 / -1", borderRadius:16, padding:"20px 24px", background:colors.bg, border:`1px solid ${p2.color}40` }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
+                        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                          <span style={{ fontSize:22 }}>{p2.icon}</span>
+                          <div>
+                            <div style={{ fontSize:14, fontWeight:600, color:colors.text }}>{p2.title}</div>
+                            {p2.builtAt && <div style={{ fontSize:11, color:p2.color, fontWeight:500 }}>{p2.builtAt}</div>}
+                          </div>
+                        </div>
+                        <button onClick={e=>{e.stopPropagation();setExpanded(null);}} style={{ background:"transparent", border:"none", fontSize:18, color:colors.subtext, cursor:"pointer", lineHeight:1, padding:"2px 6px", borderRadius:6 }}>✕</button>
+                      </div>
+                      <p style={{ fontSize:14, color:colors.text, lineHeight:1.8 }}>{p2.detail}</p>
+                    </div>
+                  );
+                }
+              }
+            }
+            return items;
+          })()}
+        </div>
       </div>
     </SectionShell>
   );
@@ -890,12 +907,13 @@ const MenuBar=({section,dark,setDark})=>{
 const Footer = () => {
   const { colors } = useTheme();
   return (
-    <div style={{ textAlign:"center", padding:"20px 0 4px", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
-      <span style={{ fontSize:11, color:colors.subtext, letterSpacing:"0.04em" }}>Dheeraj Yampati</span>
-      <span style={{ fontSize:11, color:colors.border }}>·</span>
-      <span style={{ fontSize:11, color:colors.subtext, letterSpacing:"0.04em" }}>Production</span>
-      <span style={{ fontSize:11, color:colors.border }}>·</span>
-      <span style={{ fontSize:11, color:colors.subtext, letterSpacing:"0.04em" }}>© 2026</span>
+    <div style={{ textAlign:"center", padding:"28px 0 100px" }}>
+      <div style={{ fontSize:12, fontWeight:500, color:colors.subtext, letterSpacing:"0.04em" }}>
+        Dheeraj Yampati Production
+      </div>
+      <div style={{ fontSize:11, color:colors.subtext, opacity:0.5, marginTop:4, letterSpacing:"0.03em" }}>
+                Daze@2026
+      </div>
     </div>
   );
 };
@@ -929,7 +947,7 @@ export default function PortfolioOS() {
       <div style={{minHeight:"100vh",background:colors.bg,fontFamily:font,transition:"background 0.3s ease"}}>
         <style>{getGlobalStyle(dark,colors)}</style>
         <MenuBar section={section} dark={dark} setDark={setDark}/>
-        <div key={key} className="section-enter" style={{paddingTop:64,paddingBottom:24,paddingLeft:16,paddingRight:16,maxWidth:1000,margin:"0 auto"}}>
+        <div key={key} className="section-enter" style={{paddingTop:64,paddingBottom:0,paddingLeft:16,paddingRight:16,maxWidth:1000,margin:"0 auto"}}>
           {loading?<SkeletonSection/>:sections[section]}
           <Footer/>
         </div>
