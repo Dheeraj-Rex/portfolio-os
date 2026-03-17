@@ -26,7 +26,7 @@ const font = "'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Ne
 const getGlobalStyle = (dark, c) => `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
   *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-  body { background:${c.bg}; font-family:${font}; transition:background 0.3s ease; cursor:none; }
+  body { background:${c.bg}; font-family:${font}; transition:background 0.3s ease; }
   ::-webkit-scrollbar { width:6px; }
   ::-webkit-scrollbar-track { background:transparent; }
   ::-webkit-scrollbar-thumb { background:rgba(128,128,128,0.25); border-radius:10px; }
@@ -44,20 +44,23 @@ const getGlobalStyle = (dark, c) => `
   .scaleIn  { animation:scaleIn  0.35s cubic-bezier(.22,.68,0,1.2) both; }
   .section-enter { animation:slideUp 0.42s cubic-bezier(.22,.68,0,1.15) both; }
 
-  .dock-icon { transition:transform 0.2s cubic-bezier(.22,.68,0,1.2); cursor:none; }
+  .dock-icon { transition:transform 0.2s cubic-bezier(.22,.68,0,1.2); cursor:pointer; }
   .dock-icon:hover { transform:scale(1.24) translateY(-7px) !important; }
 
-  .card { transition:all 0.2s ease; }
+  .card { transition:all 0.2s ease; cursor:pointer; }
   .card:hover { transform:translateY(-2px); box-shadow:0 10px 36px rgba(0,0,0,${dark?'0.28':'0.09'}); }
 
   .btn-primary { transition:all 0.15s ease; }
   .btn-primary:hover { filter:brightness(1.08); transform:scale(1.02); }
 
-  .mini-app { transition:all 0.2s ease; }
+  .mini-app { transition:all 0.2s ease; cursor:pointer; }
   .mini-app:hover { box-shadow:0 4px 20px ${c.accent}18 !important; border-color:${c.accent}40 !important; }
 
-  .nav-pill { transition:background 0.15s ease; border-radius:6px; }
+  .nav-pill { transition:background 0.15s ease; border-radius:6px; cursor:pointer; }
   .nav-pill:hover { background:rgba(128,128,128,0.1) !important; }
+
+  .blog-card { transition:all 0.2s ease; cursor:pointer; }
+  .blog-card:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,${dark?'0.22':'0.08'}); }
 
   .skeleton-line {
     background:linear-gradient(90deg, ${c.skeleton} 25%, ${c.skeletonShine} 50%, ${c.skeleton} 75%);
@@ -66,11 +69,8 @@ const getGlobalStyle = (dark, c) => `
     border-radius:8px;
   }
 
-  .cursor-dot  { pointer-events:none; position:fixed; border-radius:50%; z-index:99999; }
-  .cursor-ring { pointer-events:none; position:fixed; border-radius:50%; z-index:99998; }
-  a, button, [role="button"], .dock-icon, .card, .mini-app { cursor:none !important; }
-
   @media (max-width:768px) {
+    .desktop-grid-6  { grid-template-columns:repeat(3,1fr) !important; gap:10px !important; }
     .desktop-grid-5  { grid-template-columns:repeat(3,1fr) !important; }
     .desktop-grid-3  { grid-template-columns:1fr 1fr !important; }
     .desktop-grid-skills { grid-template-columns:1fr 1fr !important; }
@@ -80,48 +80,15 @@ const getGlobalStyle = (dark, c) => `
     .hero-sub   { font-size:16px !important; }
     .section-pad { padding:18px !important; }
     .hide-mobile { display:none !important; }
-    body { cursor:auto; }
-    .cursor-dot, .cursor-ring { display:none; }
-    a, button, [role="button"], .dock-icon, .card, .mini-app { cursor:auto !important; }
   }
   @media (max-width:480px) {
+    .desktop-grid-6 { grid-template-columns:repeat(3,1fr) !important; gap:8px !important; }
     .desktop-grid-5 { grid-template-columns:repeat(2,1fr) !important; gap:10px !important; }
     .desktop-grid-3 { grid-template-columns:1fr !important; }
     .hero-title { font-size:28px !important; }
     .stats-bar  { gap:14px !important; flex-wrap:wrap !important; }
   }
 `;
-
-// ─── CUSTOM CURSOR ────────────────────────────────────────────────
-const CustomCursor = () => {
-  const dotRef = useRef(null);
-  const ringRef = useRef(null);
-  const mouse = useRef({ x:-100, y:-100 });
-  const ring  = useRef({ x:-100, y:-100 });
-  const raf   = useRef(null);
-  const { colors } = useTheme();
-
-  useEffect(() => {
-    const onMove = e => { mouse.current = { x: e.clientX, y: e.clientY }; };
-    window.addEventListener("mousemove", onMove);
-    const loop = () => {
-      ring.current.x += (mouse.current.x - ring.current.x) * 0.13;
-      ring.current.y += (mouse.current.y - ring.current.y) * 0.13;
-      if (dotRef.current) { dotRef.current.style.left=`${mouse.current.x-4}px`; dotRef.current.style.top=`${mouse.current.y-4}px`; }
-      if (ringRef.current){ ringRef.current.style.left=`${ring.current.x-18}px`; ringRef.current.style.top=`${ring.current.y-18}px`; }
-      raf.current = requestAnimationFrame(loop);
-    };
-    raf.current = requestAnimationFrame(loop);
-    return () => { window.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf.current); };
-  }, []);
-
-  return (
-    <>
-      <div ref={dotRef}  className="cursor-dot"  style={{ width:8,  height:8,  background:colors.accent, opacity:0.9 }} />
-      <div ref={ringRef} className="cursor-ring" style={{ width:36, height:36, border:`1.5px solid ${colors.accent}`, opacity:0.32 }} />
-    </>
-  );
-};
 
 // ─── SKELETON ────────────────────────────────────────────────────
 const SkeletonSection = () => {
@@ -177,6 +144,7 @@ const HomeSection = ({ onNav }) => {
     {id:"projects", icon:"⬡", label:"Projects",  color:"#34c759", desc:"Things I've shipped"},
     {id:"miniapps", icon:"✦", label:"Mini Apps", color:"#ff9f0a", desc:"Games, tools & AI"},
     {id:"resume",   icon:"▤", label:"Résumé",    color:"#ff3b30", desc:"Experience & skills"},
+    {id:"blog",     icon:"📝", label:"Build Log", color:"#0071e3", desc:"Thoughts & updates"},
     {id:"contact",  icon:"◎", label:"Contact",   color:"#bf5af2", desc:"Let's work together"},
   ];
   return (
@@ -195,7 +163,7 @@ const HomeSection = ({ onNav }) => {
           <button onClick={()=>onNav("contact")} style={{ background:"transparent",color:colors.text,border:`1px solid ${colors.border}`,padding:"12px 28px",borderRadius:980,fontSize:15,fontWeight:500 }}>Contact Me</button>
         </div>
       </div>
-      <div className="desktop-grid-5" style={{ display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:14,animation:"fadeUp 0.5s 0.15s ease both",opacity:0,animationFillMode:"forwards" }}>
+      <div className="desktop-grid-6" style={{ display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:12,animation:"fadeUp 0.5s 0.15s ease both",opacity:0,animationFillMode:"forwards" }}>
         {cards.map((c,i)=>(
           <div key={c.id} className="card" onClick={()=>onNav(c.id)} style={{ background:colors.surfaceSolid,borderRadius:16,border:`1px solid ${colors.border}`,padding:"20px 16px",textAlign:"center",boxShadow:"0 2px 12px rgba(0,0,0,0.05)" }}>
             <div style={{ width:48,height:48,borderRadius:14,background:`${c.color}15`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 12px",fontSize:22,color:c.color }}>{c.icon}</div>
@@ -212,6 +180,7 @@ const HomeSection = ({ onNav }) => {
           </div>
         ))}
       </div>
+      <HomeBlogPreview onNav={onNav}/>
     </div>
   );
 };
@@ -412,14 +381,19 @@ const AIChatPreview=()=>{
     const msg=input.trim();setInput("");setMsgs(m=>[...m,{role:"user",text:msg}]);setLoading(true);
     try{
       const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,
-        system:`You are a friendly AI assistant embedded in Dheeraj Yampati's personal portfolio. Answer questions about him warmly and concisely (2-3 sentences). For greetings like "hi", respond warmly and offer to help.
+        system:`You are a friendly AI assistant embedded in Dheeraj Yampati's personal portfolio. Answer questions about him warmly and concisely (2-3 sentences max).
+
+IMPORTANT: For greetings like "hi", "hello", "hey", "what's up", "how are you" — respond warmly, introduce yourself briefly, and invite them to ask about Dheeraj. Never say "I'm not sure about that" to a greeting.
+
 NAME: Dheeraj Yampati | LOCATION: Fairfax, VA | EMAIL: dheerajyampati@gmail.com
 EDUCATION: B.S. Computer Science, George Mason University, Dec 2025.
 CURRENT: SWE Intern at ELINT PRO (Sep 2025–Present, Java Spring Boot, MySQL, JWT, HRMS). Co-Founder at Apex Sky (Jan 2023–Present, startup, pitched investors).
 PAST: ML Intern VSoft Consulting (Jun–Aug 2025, AWS pipelines, RAG, Weaviate, bge-m3, Llama3, Mistral). SWE Intern Think Analytix (Jun–Aug 2024, React, FastAPI, PostgreSQL).
 PROJECTS: Microsoft ChatBot (MS Graph, FastAPI, RAG, Weaviate), TaskFlow (React, FastAPI, PostgreSQL, Docker, AWS, JWT), Immigration System (JavaFX, MySQL, MVC).
 SKILLS: Java, Python, C/C++, JS/React/Next.js, SQL, Spring Boot, FastAPI, AWS, RAG, Docker, Git.
-GITHUB: https://github.com/Dheeraj-Rex | LINKEDIN: https://linkedin.com/in/dheerajyampati`,
+GITHUB: https://github.com/Dheeraj-Rex | LINKEDIN: https://linkedin.com/in/dheerajyampati
+
+Always respond in a warm, helpful, conversational tone. Keep answers to 2-3 sentences.`,
         messages:[{role:"user",content:msg}]})});
       const data=await res.json();setMsgs(m=>[...m,{role:"ai",text:data.content?.[0]?.text||"Not sure about that!"}]);
     }catch{setMsgs(m=>[...m,{role:"ai",text:"Something went wrong — try again!"}]);}
@@ -627,8 +601,171 @@ const ContactSection=()=>{
   );
 };
 
+// ─── BUILD LOG DATA ───────────────────────────────────────────────
+// To add a new post: copy one object, change the fields, push to GitHub.
+const POSTS = [
+  {
+    id: 1,
+    type: "deep-dive",
+    title: "Building a RAG Pipeline from Scratch at VSoft",
+    date: "Aug 2025",
+    tags: ["AI", "RAG", "Python", "AWS"],
+    summary: "My internship project: turning a pile of company documents into a searchable AI brain using Weaviate, bge-m3 embeddings, and Mistral.",
+    body: `At VSoft Consulting I was handed a challenge: make 3 years of internal documents searchable using AI — in 8 weeks.
+
+The stack I ended up with: FastAPI as the backend, Weaviate as the vector database, bge-m3 for generating embeddings, and Mistral/Llama 3 for generating natural language answers.
+
+The hardest part wasn't the ML — it was chunking. How you split documents before embedding them completely changes retrieval quality. Too small and you lose context. Too big and the embedding is noisy. I landed on 512-token chunks with 64-token overlap after a lot of trial and error.
+
+The result was a tool that let employees ask questions like "what was the Q3 client onboarding process for healthcare?" and get back a cited, accurate answer in under 2 seconds. Presented it to managers and investors at the sprint review — shipped on time.
+
+Big takeaway: RAG is 20% models and 80% data pipeline. The chunking, cleaning, and indexing strategy matters way more than which LLM you pick.`,
+  },
+  {
+    id: 2,
+    type: "short",
+    title: "TaskFlow: What I'd do differently",
+    date: "Jul 2025",
+    tags: ["React", "FastAPI", "Lessons"],
+    summary: "Built a full-stack team task manager with WebSockets and Docker. Here's the one thing I'd redesign if I started over.",
+    body: `TaskFlow was my most complete full-stack project — React frontend, FastAPI backend, PostgreSQL, JWT auth, WebSocket real-time updates, Docker, deployed on AWS.
+
+If I rebuilt it today I'd replace the custom WebSocket layer with Supabase Realtime. I spent 2 weeks building and debugging the WebSocket connection management that Supabase gives you for free in 10 minutes. Classic "build vs buy" lesson learned the hard way.
+
+The Docker + AWS deployment was actually the smoothest part — turns out containerizing from day one saves you enormous pain later.`,
+  },
+  {
+    id: 3,
+    type: "short",
+    title: "Co-founding Apex Sky — what 2 years taught me",
+    date: "Jan 2025",
+    tags: ["Startup", "Entrepreneurship", "Lessons"],
+    summary: "Two years in on Apex Sky. The most surprising thing I learned had nothing to do with code.",
+    body: `When I co-founded Apex Sky in 2023 I thought the hardest part would be building the product. I was wrong — the hardest part is deciding what NOT to build.
+
+We talked to professors, CEOs, and industry leaders. Every conversation added a new "must-have" feature to the list. Learning to say no — and to validate before building — is the most valuable skill I've developed outside of engineering.
+
+Pitching to investors is also nothing like you imagine. They care less about features than you think. They care about: do you understand the problem deeply, and why are you the right person to solve it?
+
+Still building. More updates soon.`,
+  },
+  {
+    id: 4,
+    type: "deep-dive",
+    title: "How I built this Portfolio OS",
+    date: "Mar 2026",
+    tags: ["React", "Design", "Canvas API"],
+    summary: "A portfolio that IS a product. How I designed and built an OS-style personal site with embedded games, an AI chatbot, and a live build log.",
+    body: `Most developer portfolios are glorified resumes with a projects section. I wanted mine to be a product you actually experience — not just read.
+
+The concept: a macOS-inspired operating system. Fixed menu bar with live clock. An animated dock for navigation. Each section opens like an app window with window control dots.
+
+The most fun part was the mini apps — real, working apps embedded directly in the page. Snake and Breakout built on HTML Canvas with a full game loop running at 60fps via requestAnimationFrame. The AI Assistant calls a Vercel serverless function that proxies to the Anthropic API — no CORS issues, no exposed keys.
+
+Dark mode was straightforward: a React Context that swaps two complete color token objects. Every component reads from the context so the whole UI responds instantly.
+
+The build log you're reading right now is just a static array in the source code. No CMS, no database. Adding a post = adding one object and pushing to GitHub. Simple wins.
+
+Stack: React + Vite, deployed on Vercel, custom serverless API routes for AI and email.`,
+  },
+];
+
+// ─── BLOG SECTION ─────────────────────────────────────────────────
+const BlogSection = () => {
+  const { colors } = useTheme();
+  const [expanded, setExpanded] = useState(null);
+
+  return (
+    <SectionShell>
+      <div style={{ maxWidth:860, margin:"0 auto" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:28 }}>
+          <div>
+            <p style={{ fontSize:12, fontWeight:600, color:colors.accent, letterSpacing:"0.08em", textTransform:"uppercase", marginBottom:6 }}>Thoughts & Work</p>
+            <h2 style={{ fontSize:32, fontWeight:700, color:colors.text, letterSpacing:"-0.025em" }}>Build Log</h2>
+          </div>
+          <span style={{ fontSize:13, color:colors.subtext }}>{POSTS.length} posts</span>
+        </div>
+
+        <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+          {POSTS.map(post => {
+            const isOpen = expanded === post.id;
+            const isDeepDive = post.type === "deep-dive";
+            return (
+              <div key={post.id}>
+                <div className="blog-card" onClick={() => setExpanded(isOpen ? null : post.id)}
+                  style={{ borderRadius:16, padding:22, border:`1px solid ${isOpen ? colors.accent+"40" : colors.border}`, background: isOpen ? `${colors.accent}05` : colors.surfaceSolid, boxShadow:"0 2px 12px rgba(0,0,0,0.04)" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12 }}>
+                    <div style={{ flex:1 }}>
+                      <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:8, flexWrap:"wrap" }}>
+                        <span style={{ fontSize:11, fontWeight:600, padding:"2px 10px", borderRadius:20,
+                          background: isDeepDive ? `${colors.accent}15` : `${colors.green}15`,
+                          color: isDeepDive ? colors.accent : colors.green }}>
+                          {isDeepDive ? "Deep Dive" : "Quick Take"}
+                        </span>
+                        {post.tags.map(t => <Tag key={t} label={t} />)}
+                        <span style={{ fontSize:11, color:colors.subtext, marginLeft:"auto" }}>{post.date}</span>
+                      </div>
+                      <h3 style={{ fontSize:16, fontWeight:600, color:colors.text, lineHeight:1.3, marginBottom:6 }}>{post.title}</h3>
+                      <p style={{ fontSize:13, color:colors.subtext, lineHeight:1.6 }}>{post.summary}</p>
+                    </div>
+                    <div style={{ fontSize:18, color:colors.subtext, transition:"transform 0.2s ease", transform: isOpen ? "rotate(90deg)" : "rotate(0deg)", flexShrink:0, marginTop:2 }}>›</div>
+                  </div>
+                </div>
+
+                {/* Expanded body */}
+                {isOpen && (
+                  <div className="slideUp" style={{ marginTop:4, borderRadius:14, padding:"24px 26px", background:colors.bg, border:`1px solid ${colors.border}` }}>
+                    {post.body.split("\n\n").map((para, i) => (
+                      <p key={i} style={{ fontSize:14, color:colors.text, lineHeight:1.8, marginBottom: i < post.body.split("\n\n").length - 1 ? 16 : 0 }}>{para}</p>
+                    ))}
+                    <div style={{ marginTop:20, paddingTop:16, borderTop:`1px solid ${colors.border}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                      <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                        {post.tags.map(t => <Tag key={t} label={t} />)}
+                      </div>
+                      <span style={{ fontSize:12, color:colors.subtext }}>{post.date}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </SectionShell>
+  );
+};
+
+// ─── HOME BLOG PREVIEW ────────────────────────────────────────────
+const HomeBlogPreview = ({ onNav }) => {
+  const { colors } = useTheme();
+  const latest = POSTS.slice(0, 3);
+  return (
+    <div style={{ marginTop:28, animation:"fadeUp 0.5s 0.35s ease both", opacity:0, animationFillMode:"forwards" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
+        <span style={{ fontSize:13, fontWeight:600, color:colors.text }}>📝 Latest from Build Log</span>
+        <button onClick={() => onNav("blog")} style={{ fontSize:12, color:colors.accent, background:"none", border:"none", cursor:"pointer", fontWeight:500 }}>View all →</button>
+      </div>
+      <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+        {latest.map(post => (
+          <div key={post.id} className="blog-card" onClick={() => onNav("blog")}
+            style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 16px", borderRadius:12, background:colors.surfaceSolid, border:`1px solid ${colors.border}`, boxShadow:"0 1px 6px rgba(0,0,0,0.04)" }}>
+            <div style={{ width:36, height:36, borderRadius:10, background: post.type==="deep-dive" ? `${colors.accent}15` : `${colors.green}15`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>
+              {post.type === "deep-dive" ? "📖" : "⚡"}
+            </div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontSize:13, fontWeight:600, color:colors.text, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{post.title}</div>
+              <div style={{ fontSize:11, color:colors.subtext, marginTop:2 }}>{post.date} · {post.type === "deep-dive" ? "Deep Dive" : "Quick Take"}</div>
+            </div>
+            <div style={{ fontSize:16, color:colors.subtext, flexShrink:0 }}>›</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // ─── DOCK ─────────────────────────────────────────────────────────
-const dockItems=[{id:"home",icon:"🏠"},{id:"about",icon:"👤"},{id:"projects",icon:"🗂️"},{id:"miniapps",icon:"✦"},{id:"resume",icon:"📄"},{id:"contact",icon:"📬"}];
+const dockItems=[{id:"home",icon:"🏠"},{id:"about",icon:"👤"},{id:"projects",icon:"🗂️"},{id:"miniapps",icon:"✦"},{id:"resume",icon:"📄"},{id:"blog",icon:"📝"},{id:"contact",icon:"📬"}];
 
 const Dock=({active,onNav})=>{
   const {colors}=useTheme();
@@ -649,7 +786,7 @@ const MenuBar=({section,dark,setDark})=>{
   const {colors}=useTheme();
   const [time,setTime]=useState(new Date());
   useEffect(()=>{const t=setInterval(()=>setTime(new Date()),1000);return()=>clearInterval(t);},[]);
-  const labels={home:"Home",about:"About Me",projects:"Projects",miniapps:"Mini Apps",resume:"Résumé",contact:"Contact"};
+  const labels={home:"Home",about:"About Me",projects:"Projects",miniapps:"Mini Apps",resume:"Résumé",blog:"Build Log",contact:"Contact"};
   return(
     <div style={{position:"fixed",top:0,left:0,right:0,zIndex:200,background:colors.menubar,backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:`1px solid ${colors.border}`,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"0 16px",height:44}}>
       <div style={{display:"flex",gap:16,alignItems:"center"}}>
@@ -684,6 +821,7 @@ export default function PortfolioOS() {
     projects:<ProjectsSection/>,
     miniapps:<MiniAppsSection/>,
     resume:<ResumeSection/>,
+    blog:<BlogSection/>,
     contact:<ContactSection/>,
   };
 
@@ -691,7 +829,6 @@ export default function PortfolioOS() {
     <ThemeCtx.Provider value={{colors,dark,setDark}}>
       <div style={{minHeight:"100vh",background:colors.bg,fontFamily:font,transition:"background 0.3s ease"}}>
         <style>{getGlobalStyle(dark,colors)}</style>
-        <CustomCursor/>
         <MenuBar section={section} dark={dark} setDark={setDark}/>
         <div key={key} className="section-enter" style={{paddingTop:64,paddingBottom:110,paddingLeft:16,paddingRight:16,maxWidth:1000,margin:"0 auto"}}>
           {loading?<SkeletonSection/>:sections[section]}
